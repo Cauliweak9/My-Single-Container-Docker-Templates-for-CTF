@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Solidity IDE</title>
+    <link href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        #editor { height: 70vh; border: 1px solid #ddd; }
+        #sidebar { width: 300px; background: #f8f9fa; }
+    </style>
+</head>
+<body class="d-flex">
+    <!-- 侧边栏 -->
+    <div id="sidebar" class="p-3 border-end">
+        <div id="interactionPanel"></div>
+    </div>
+
+    <!-- 主编辑区 -->
+    <div class="flex-grow-1 p-3">
+        <div id="editor"></div>
+        <div class="mt-3 d-flex gap-2">
+            <input type="text" id="constructorArgs" class="form-control" 
+                   placeholder="Constructor arguments">
+            <button class="btn btn-success" onclick="handleDeploy()">Deploy</button>
+        </div>
+    </div>
+
+    <!-- 调整加载顺序和类型 -->
+    <script src="{{ url_for('static', filename='jquery-3.7.1/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='monaco-editor-0.52.2/package/min/vs/loader.js') }}"></script>
+    
+    <script>
+        // 配置Monaco路径（使用Flask的静态路径）
+        require.config({
+            baseUrl: "{{ url_for('static', filename='monaco-editor-0.52.2/package/min') }}",
+            paths: {
+                vs: '{{ url_for("static", filename="monaco-editor-0.52.2/package/min/vs") }}'
+            }
+        });
+
+        // 初始化编辑器
+        require(["vs/editor/editor.main"], function() {
+            const editor = monaco.editor.create(document.getElementById('editor'), {
+                value: '// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\ncontract Attack {\n    constructor() {}\n}',
+                language: 'sol',  // 使用注册的语言ID
+                theme: 'vs-dark',
+                minimap: { enabled: true },
+                automaticLayout: true
+            });
+        });
+
+        function handleDeploy() {
+            const code = monaco.editor.getModels()[0].getValue();
+            const args = $('#constructorArgs').val();
+            
+            $('#interactionPanel').html(`
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Contract Interaction</h5>
+                        <div class="mt-2" id="runtimeOutput"></div>
+                        <input type="text" class="form-control mt-2" placeholder="Function call">
+                        <button class="btn btn-sm btn-primary mt-2" onclick="executeFunction()">Execute</button>
+                    </div>
+                </div>
+            `);
+        }
+    </script>
+</body>
+</html>

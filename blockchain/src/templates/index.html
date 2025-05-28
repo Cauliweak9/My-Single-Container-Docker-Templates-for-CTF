@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Instance Manager</title>
+    <link href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
+</head>
+<body class="container mt-5">
+
+    <div class="card">
+        <div class="card-body">
+            <!-- 按钮组 -->
+            <button id="startBtn" class="btn btn-primary">Start Environment</button>
+            <button id="newBtn" class="btn btn-secondary" disabled>New Instance</button>
+            <button id="submitBtn" class="btn btn-dark" disabled>Submit Instance</button>
+            
+            <!-- 显示区域 -->
+            <div class="mt-3">
+                <pre id="output" class="bg-light p-3" style="height: 300px; overflow: auto"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='jquery-3.7.1/jquery-3.7.1.min.js') }}"></script>
+    <script>
+        let address = "";
+        let priv_key = "";
+
+        // 获取当前挑战信息
+        function get_challenge_info() {
+            return {
+                challenge_addr: address,
+                private_key: priv_key
+            };
+        }
+
+        // 显示数据（通用）
+        function displayData(data) {
+            let output = "";
+            for (const [key, value] of Object.entries(data)) {
+                output += `${key}: ${value}\n`;
+            }
+            $('#output').text(output);
+        }
+
+        // 显示仅 message + 地址和私钥
+        function displayMessageWithInfo(message) {
+            let output = `message: ${message}\n`;
+            output += `challenge_addr: ${address}\n`;
+            output += `private_key: ${priv_key}\n`;
+            $('#output').text(output);
+        }
+
+        // 保存数据到本地
+        function saveToLocalStorage() {
+            const data = {
+                address,
+                priv_key
+            };
+            localStorage.setItem("challenge_info", JSON.stringify(data));
+        }
+
+        // 从本地恢复数据
+        function loadFromLocalStorage() {
+            const data = localStorage.getItem("challenge_info");
+            if (data) {
+                const parsed = JSON.parse(data);
+                address = parsed.address;
+                priv_key = parsed.priv_key;
+                return true;
+            }
+            return false;
+        }
+
+        // 初始化逻辑
+        async function handleStart() {
+            try {
+                const response = await fetch("/api/initialization", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                const data = await response.json();
+                address = data.challenge_address;
+                priv_key = data.private_key;
+
+                saveToLocalStorage();
+
+                $('#newBtn, #submitBtn').prop('disabled', false);
+                $('#startBtn').prop('disabled', true);
+
+                displayData(get_challenge_info());
+            } catch (error) {
+                $('#output').text("Error during initialization: " + error);
+            }
+        }
+
+        async function handleNew() {
+            try {
+                const response = await fetch("/api/create_instance", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                const data = await response.json();
+                address = data.challenge_address;
+                priv_key = data.private_key;
+
+                saveToLocalStorage();
+
+                displayData(get_challenge_info());
+            } catch (error) {
+                $('#output').text("Error during create_instance: " + error);
+            }
+        }
+
+        async function handleSubmit() {
+            try {
+                const response = await fetch("/api/get_flag", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                const data = await response.json();
+                displayMessageWithInfo(data.message);
+            } catch (error) {
+                $('#output').text("Error during get_flag: " + error);
+            }
+        }
+
+        // 页面加载时执行
+        $(document).ready(function () {
+            const hasData = loadFromLocalStorage();
+            if (hasData) {
+                $('#newBtn, #submitBtn').prop('disabled', false);
+                $('#startBtn').prop('disabled', true);
+                displayData(get_challenge_info());
+            }
+
+            // 绑定事件
+            $('#startBtn').on('click', handleStart);
+            $('#newBtn').on('click', handleNew);
+            $('#submitBtn').on('click', handleSubmit);
+        });
+    </script>
+</body>
+</html>
