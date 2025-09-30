@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>glitch-canvas example</title>
+		<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body { font-family: sans-serif; color: #333; font-size: 14px; padding: 50px; }
+		h1 { font-weight: normal; font-size: 14px; margin-bottom: 10px; margin-top: 50px; }
+		textarea { width: 650px; height: 400px; }
+		</style>
+	</head>
+	<body>
+		<h1>toDataURL</h1>
+		<div id="img-container"></div>
+		<h1>toImageData</h1>
+		<div id="canvas-container"></div>
+
+		<h1>toImage</h1>
+		<div id="imgel-container"></div>
+		
+		<script type="module">
+import glitch from '../dist/glitch-canvas-browser.es6.js';
+			
+const imagePath = 'img/lincoln.jpg';
+const imgContainerEl = document.getElementById( 'img-container' );
+const imgElContainerEl = document.getElementById( 'imgel-container' );
+const canvasContainerEl = document.getElementById( 'canvas-container' );
+
+const params = {
+	amount:     35,
+	iterations: 20,
+	quality:    30,
+	seed:       25
+};
+
+loadImage( imagePath, function ( img ) {
+	glitch( params )
+		.fromImage( img )
+		.toDataURL()
+		.then( function( dataURL ) {
+			const imageEl = new Image();
+			imageEl.src = dataURL;
+			imgContainerEl.appendChild( imageEl );
+		} );
+
+	glitch( params )
+		.fromImage( img )
+		.toImageData()
+		.then( function( imageData ) {
+			const canvasEl = document.createElement( 'canvas' );
+			canvasEl.width = imageData.width;
+			canvasEl.height = imageData.height;
+			canvasEl.style.width = imageData.width + 'px';
+			const ctx = canvasEl.getContext( '2d' );
+			canvasContainerEl.appendChild( canvasEl );
+			ctx.putImageData( imageData, 0, 0 );
+		} );
+
+	glitch( params )
+		.fromImage( img )
+		.toImage()
+		.then( function( imgEl ) {
+			imgElContainerEl.appendChild( imgEl );
+		} );
+} );
+
+function loadImage ( src, callback ) {
+	const imageEl = new Image();
+
+	imageEl.onload = function () {
+		callback( imageEl );
+	};
+
+	imageEl.src = src;
+}
+		</script>
+	</body>
+</html>
