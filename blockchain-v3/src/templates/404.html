@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面未找到 - 人格解离</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-6.7.2-web/css/all.min.css') }}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #e9ecef;
+            text-align: center;
+            padding: 20px;
+        }
+        .error-container {
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid #444;
+        }
+        .error-code {
+            font-size: 6rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+        .error-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #e9ecef;
+        }
+        .error-message {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        .home-btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+        }
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(99, 102, 241, 0.4);
+        }
+        .error-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            color: #6366f1;
+        }
+        .navbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-link me-2"></i>人格解离
+            </a>
+        </div>
+    </nav>
+
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">页面未找到</h2>
+        <p class="error-message">
+            抱歉，您要访问的页面不存在。可能已被移除、名称更改或暂时不可用。
+        </p>
+        <a href="{{ url_for('index') }}" class="btn home-btn">
+            <i class="fas fa-home me-2"></i>返回首页
+        </a>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
