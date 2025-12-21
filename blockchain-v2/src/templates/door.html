@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+        <div class="card border-0 shadow-lg animate__animated animate__fadeInUp">
+            <div class="card-header {% if is_special %}bg-danger{% else %}bg-primary{% endif %} text-white">
+                <h2 class="mb-0">
+                    <i class="fas {% if is_special %}fa-trophy{% else %}fa-door-open{% endif %} me-2"></i>
+                    第{{ door_number }}扇门: {{ door_name[door_number-1] }}
+                </h2>
+            </div>
+            <div class="card-body bg-dark">
+                <div class="markdown-content py-3">
+                    {{ content|safe }}
+                </div>
+            </div>
+            <div class="card-footer bg-secondary">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-2"></i>返回主页
+                    </a>
+                    <a href="{{ url_for('stage', content=content_name) }}" class="btn btn-primary">
+                        <i class="fas fa-cogs me-2"></i>进入实例界面
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

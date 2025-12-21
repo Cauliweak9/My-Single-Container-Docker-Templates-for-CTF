@@ -1,0 +1,339 @@
+/* 添加固定面板相关样式 */
+body {
+    position: relative;
+    min-height: 100vh;
+}
+
+.stage-content {
+    padding-bottom: 250px; /* 为固定面板留出空间 */
+}
+
+.control-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #2d2d2d;
+    border-top: 1px solid #444;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 输入框样式 */
+.form-control[readonly] {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #f8f9fa;
+}
+
+/* 按钮加载状态 */
+.btn-spinner .fa-spinner {
+    margin-right: 5px;
+}
+
+/* 新增Markdown内容样式 */
+.markdown-content {
+    color: #e0e0e0;
+    line-height: 1.7;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    color: #f8f9fa;
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    font-weight: 600;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.3em;
+}
+
+.markdown-content h1 { font-size: 2em; }
+.markdown-content h2 { font-size: 1.7em; }
+.markdown-content h3 { font-size: 1.4em; }
+.markdown-content h4 { font-size: 1.2em; }
+
+.markdown-content p {
+    margin-bottom: 1.2em;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    margin-bottom: 1.2em;
+    padding-left: 2em;
+}
+
+.markdown-content li {
+    margin-bottom: 0.5em;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid #6c757d;
+    padding: 0 1em;
+    color: #adb5bd;
+    margin: 1.5em 0;
+}
+
+/* Markdown内容样式 */
+.markdown-content pre {
+    background-color: #1e1e1e;
+    border-radius: 6px;
+    padding: 1em;
+    overflow-x: auto;
+}
+
+.markdown-content code {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.markdown-content pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+/* 代码高亮样式 */
+.markdown-content .hll { background-color: #49483e }
+.markdown-content .c { color: #75715e } /* Comment */
+.markdown-content .err { color: #960050; background-color: #1e0010 } /* Error */
+.markdown-content .k { color: #66d9ef } /* Keyword */
+.markdown-content .l { color: #ae81ff } /* Literal */
+.markdown-content .n { color: #f8f8f2 } /* Name */
+.markdown-content .o { color: #f92672 } /* Operator */
+.markdown-content .p { color: #f8f8f2 } /* Punctuation */
+.markdown-content .cm { color: #75715e } /* Comment.Multiline */
+.markdown-content .cp { color: #75715e } /* Comment.Preproc */
+.markdown-content .c1 { color: #75715e } /* Comment.Single */
+.markdown-content .cs { color: #75715e } /* Comment.Special */
+.markdown-content .ge { font-style: italic } /* Generic.Emph */
+.markdown-content .gs { font-weight: bold } /* Generic.Strong */
+.markdown-content .kc { color: #66d9ef } /* Keyword.Constant */
+.markdown-content .kd { color: #66d9ef } /* Keyword.Declaration */
+.markdown-content .kn { color: #f92672 } /* Keyword.Namespace */
+.markdown-content .kp { color: #66d9ef } /* Keyword.Pseudo */
+.markdown-content .kr { color: #66d9ef } /* Keyword.Reserved */
+.markdown-content .kt { color: #66d9ef } /* Keyword.Type */
+.markdown-content .ld { color: #e6db74 } /* Literal.Date */
+.markdown-content .m { color: #ae81ff } /* Literal.Number */
+.markdown-content .s { color: #e6db74 } /* Literal.String */
+.markdown-content .na { color: #a6e22e } /* Name.Attribute */
+.markdown-content .nb { color: #f8f8f2 } /* Name.Builtin */
+.markdown-content .nc { color: #a6e22e } /* Name.Class */
+.markdown-content .no { color: #66d9ef } /* Name.Constant */
+.markdown-content .nd { color: #a6e22e } /* Name.Decorator */
+.markdown-content .ni { color: #f8f8f2 } /* Name.Entity */
+.markdown-content .ne { color: #a6e22e } /* Name.Exception */
+.markdown-content .nf { color: #a6e22e } /* Name.Function */
+.markdown-content .nl { color: #f8f8f2 } /* Name.Label */
+.markdown-content .nn { color: #f8f8f2 } /* Name.Namespace */
+.markdown-content .nx { color: #a6e22e } /* Name.Other */
+.markdown-content .py { color: #f8f8f2 } /* Name.Property */
+.markdown-content .nt { color: #f92672 } /* Name.Tag */
+.markdown-content .nv { color: #f8f8f2 } /* Name.Variable */
+.markdown-content .ow { color: #f92672 } /* Operator.Word */
+.markdown-content .w { color: #f8f8f2 } /* Text.Whitespace */
+.markdown-content .mf { color: #ae81ff } /* Literal.Number.Float */
+.markdown-content .mh { color: #ae81ff } /* Literal.Number.Hex */
+.markdown-content .mi { color: #ae81ff } /* Literal.Number.Integer */
+.markdown-content .mo { color: #ae81ff } /* Literal.Number.Oct */
+.markdown-content .sb { color: #e6db74 } /* Literal.String.Backtick */
+.markdown-content .sc { color: #e6db74 } /* Literal.String.Char */
+.markdown-content .sd { color: #e6db74 } /* Literal.String.Doc */
+.markdown-content .s2 { color: #e6db74 } /* Literal.String.Double */
+.markdown-content .se { color: #ae81ff } /* Literal.String.Escape */
+.markdown-content .sh { color: #e6db74 } /* Literal.String.Heredoc */
+.markdown-content .si { color: #e6db74 } /* Literal.String.Interpol */
+.markdown-content .sx { color: #e6db74 } /* Literal.String.Other */
+.markdown-content .sr { color: #e6db74 } /* Literal.String.Regex */
+.markdown-content .s1 { color: #e6db74 } /* Literal.String.Single */
+.markdown-content .ss { color: #e6db74 } /* Literal.String.Symbol */
+.markdown-content .bp { color: #f8f8f2 } /* Name.Builtin.Pseudo */
+.markdown-content .vc { color: #f8f8f2 } /* Name.Variable.Class */
+.markdown-content .vg { color: #f8f8f2 } /* Name.Variable.Global */
+.markdown-content .vi { color: #f8f8f2 } /* Name.Variable.Instance */
+.markdown-content .il { color: #ae81ff } /* Literal.Number.Integer.Long */
+
+/* 表格样式 */
+.markdown-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5em 0;
+    background-color: #2d2d2d;
+}
+
+.markdown-content th,
+.markdown-content td {
+    border: 1px solid #444;
+    padding: 0.6em 1em;
+    text-align: left;
+}
+
+.markdown-content th {
+    background-color: #3d3d3d;
+    font-weight: 600;
+}
+
+.markdown-content tr:nth-child(even) {
+    background-color: #252525;
+}
+
+/* 链接样式 */
+.markdown-content a {
+    color: #4dabf7;
+    text-decoration: none;
+}
+
+.markdown-content a:hover {
+    color: #74c0fc;
+    text-decoration: underline;
+}
+
+/* LaTeX公式样式 */
+.MathJax_Display, .arithmatex {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.5em 0;
+}
+
+/* 行内公式 */
+.MathJax, .arithmatex-inline {
+    color: #f8f9fa;
+    background-color: rgba(200, 200, 200, 0.1);
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+}
+
+/* 块级公式 */
+.MathJax_Display, .arithmatex-display {
+    background-color: rgba(200, 200, 200, 0.05);
+    padding: 1em;
+    border-radius: 5px;
+    margin: 1em 0;
+    border-left: 3px solid #6c757d;
+}
+
+/* 为每扇门添加不同颜色 */
+.door-1 { border-top: 5px solid #3498db !important; }  /* 蓝色 */
+.door-2 { border-top: 5px solid #2ecc71 !important; }  /* 绿色 */
+.door-3 { border-top: 5px solid #e74c3c !important; }  /* 红色 */
+.door-4 { border-top: 5px solid #f39c12 !important; }  /* 橙色 */
+.door-5 { border-top: 5px solid #9b59b6 !important; }  /* 紫色 */
+.door-6 { border-top: 5px solid #1abc9c !important; }  /* 青绿色 */
+.door-7 { border-top: 5px solid #d35400 !important; }  /* 深橙色 */
+
+/* 悬停时加深颜色 */
+.door-1:hover { border-top-color: #2980b9 !important; }
+.door-2:hover { border-top-color: #27ae60 !important; }
+.door-3:hover { border-top-color: #c0392b !important; }
+.door-4:hover { border-top-color: #e67e22 !important; }
+.door-5:hover { border-top-color: #8e44ad !important; }
+.door-6:hover { border-top-color: #16a085 !important; }
+.door-7:hover { border-top-color: #a04000 !important; }
+
+/* 已访问门的样式 */
+.door-visited.door-1 { background-color: rgba(52, 152, 219, 0.1) !important; }
+.door-visited.door-2 { background-color: rgba(46, 204, 113, 0.1) !important; }
+.door-visited.door-3 { background-color: rgba(231, 76, 60, 0.1) !important; }
+.door-visited.door-4 { background-color: rgba(243, 156, 18, 0.1) !important; }
+.door-visited.door-5 { background-color: rgba(155, 89, 182, 0.1) !important; }
+.door-visited.door-6 { background-color: rgba(26, 188, 156, 0.1) !important; }
+.door-visited.door-7 { background-color: rgba(211, 84, 0, 0.1) !important; }
+
+/* 第8扇门特殊样式 */
+.special-door {
+    border-top: 5px solid #e74c3c !important;
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.3) 100%) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.special-door:hover {
+    border-top-color: #c0392b !important;
+}
+
+.special-door::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 45%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 55%
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
+}
+
+/* 404和锁定页面样式 */
+.error-icon {
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-20px); }
+}
+
+/* 添加秘密门相关样式 */
+.secret-door {
+    background: linear-gradient(135deg, rgba(255,0,255,0.1) 0%, rgba(0,255,255,0.3) 100%) !important;
+    border-top: 5px solid #ff00ff !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.secret-door::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 45%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 55%
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
+}

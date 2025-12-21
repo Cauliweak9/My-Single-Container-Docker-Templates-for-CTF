@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-5 animate__animated animate__fadeIn">
+    <h1 class="display-3 fw-bold mb-3 text-shadow">欢迎来到千链万花</h1>
+    <!--我靠柚子厨蒸鹅心我实在是受不了了-->
+    <p class="lead text-muted">选择一扇门开始你的冒险...</p>
+</div>
+
+<div class="row g-4 justify-content-center door-container">
+    {% for i in range(1, 8) %}
+        <div class="col-md-4 col-lg-3">
+            <a href="{{ url_for('door', content=markdown_contents[i-1]) }}" 
+                class="door-card card h-100 border-0 shadow-lg overflow-hidden 
+                        {% if i in completed %}door-visited{% endif %}
+                        animate__animated animate__zoomIn door-{{ i }}" 
+                style="animation-delay: {{ loop.index * 0.1 }}s">
+                <div class="door-number display-1 fw-bold my-4">{{ i }}</div>
+                <div class="card-footer bg-transparent border-0 py-3">
+                    <h5 class="mb-0">{{ door_name[i-1] }}</h5>
+                    {% if i in completed %}
+                        <small class="text-success"><i class="fas fa-check-circle"></i> 已探索</small>
+                    {% else %}
+                        <small class="text-muted">未探索</small>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+    
+    {% if all_visited %}
+        <div class="col-md-4 col-lg-3">
+            <a href="{{ url_for('door', content=markdown_contents[7]) }}" 
+            class="door-card card h-100 border-0 shadow-lg overflow-hidden special-door"
+            style="animation-delay: 0.8s">
+                <div class="door-number display-1 fw-bold my-4">8</div>
+                <div class="card-footer bg-transparent border-0 py-3">
+                    <h5 class="mb-0">{{ door_name[7] }}</h5>
+                    <small class="text-warning"><i class="fas fa-lock-open"></i> 已解锁</small>
+                </div>
+                <div class="sparkles">
+                    <i class="fas fa-sparkle"></i>
+                    <i class="fas fa-sparkle"></i>
+                    <i class="fas fa-sparkle"></i>
+                </div>
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="mt-5 text-center animate__animated animate__fadeInUp">
+    <div class="progress mb-3 mx-auto" style="max-width: 500px; height: 10px;">
+        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+             role="progressbar" 
+             style="width: {{ (completed_count / 7) * 100 }}%"
+             id="progressBar">
+        </div>
+    </div>
+    <p class="text-muted" id="progressText">
+        探索进度: {{ completed_count }}/7
+        {% if completed %}
+            (已完成: {{ completed|sort|join(', ') }}号门)
+        {% endif %}
+    </p>
+</div>
+
+<script>
+// 实时更新进度显示
+document.addEventListener('DOMContentLoaded', function() {
+    // 从全局变量获取进度
+    function updateProgress() {
+        fetch('/progress')
+            .then(response => response.json())
+            .then(data => {
+                const progress = (data.completed_count / 7) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+                document.getElementById('progressText').innerHTML = `
+                    探索进度: ${data.completed_count}/7
+                    ${data.completed_count > 0 ? `(已完成: ${[...data.completed].sort((a,b) => a-b).join(', ')}号门)` : ''}
+                `;
+            });
+    }
+    
+    // 每2秒更新一次进度
+    setInterval(updateProgress, 2000);
+});
+</script>
+{% endblock %}

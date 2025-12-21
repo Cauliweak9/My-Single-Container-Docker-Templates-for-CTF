@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 text-center">
+        <div class="card border-0 shadow-lg animate__animated animate__fadeIn">
+            <div class="card-header bg-warning text-dark">
+                <h1 class="display-4 mb-0">
+                    <i class="fas fa-lock me-2"></i>门已锁定
+                </h1>
+            </div>
+            <div class="card-body py-5">
+                <div class="error-icon display-1 text-warning mb-4">
+                    <i class="fas fa-door-closed"></i>
+                </div>
+                <h2 class="mb-4">此处梦境尚未解锁</h2>
+                <p class="lead">您需要先完成所有7扇普通门的探索才能进入这里。</p>
+                
+                <div class="progress mb-4 mx-auto" style="max-width: 400px; height: 10px;">
+                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                         role="progressbar" 
+                         style="width: {{ (completed_count / 7) * 100 }}%">
+                    </div>
+                </div>
+                
+                <p>当前进度: {{ completed_count }}/7</p>
+                {% if completed %}
+                <p class="text-muted">已访问: {{ completed|sort|join(', ') }}号门</p>
+                {% endif %}
+                
+                <div class="mt-5">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-arrow-left me-2"></i>返回继续探索
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

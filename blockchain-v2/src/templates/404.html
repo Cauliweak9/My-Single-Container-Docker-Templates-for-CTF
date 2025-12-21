@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 text-center">
+        <div class="card border-0 shadow-lg animate__animated animate__fadeIn">
+            <div class="card-header bg-danger text-white">
+                <h1 class="display-4 mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>404
+                </h1>
+            </div>
+            <div class="card-body py-5">
+                <div class="error-icon display-1 text-danger mb-4">
+                    <i class="fas fa-door-closed"></i>
+                </div>
+                <h2 class="mb-4">门不存在</h2>
+                <p class="lead">您尝试访问的门似乎指引您来到了梦境边界之地</p>
+                <p>为防止迷路，建议您原路返回，或者使用这里为您提供的梦境药水</p>
+                
+                <div class="mt-5">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-home me-2"></i>返回主页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

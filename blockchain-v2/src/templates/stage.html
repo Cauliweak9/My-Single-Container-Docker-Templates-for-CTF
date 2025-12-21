@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid h-100 d-flex flex-column">
+    <!-- 导航栏和返回按钮 -->
+    <nav class="navbar navbar-dark bg-dark mb-3">
+        <div class="container">
+            <a href="{{ url_for('door', content=content_name) }}" class="btn btn-outline-light me-3">
+                <i class="fas fa-arrow-left me-2"></i>返回
+            </a>
+            <span class="navbar-brand">
+                <i class="fas fa-gamepad me-2"></i>
+                第{{ door_number }}扇门: {{ door_name[door_number-1] }}
+            </span>
+        </div>
+    </nav>
+
+    <!-- 可滚动的说明内容区域 -->
+    <div class="flex-grow-1 overflow-auto py-3 px-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                {% if stage_info %}
+                <div class="stage-info mb-4 p-3 bg-dark rounded border border-secondary markdown-content">
+                    {{ stage_info|safe }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyRpcUrl() {
+            const rpcUrl = document.getElementById('rpcUrl');
+            rpcUrl.select();
+            document.execCommand('copy');
+            
+            // 显示复制成功提示
+            const originalText = rpcUrl.value;
+            rpcUrl.value = 'Copied!';
+            setTimeout(() => {
+                rpcUrl.value = originalText;
+            }, 1000);
+        }
+    </script>
+    
+    <!-- 固定在底部的控制面板 -->
+    <div class="fixed-bottom bg-dark border-top border-secondary pt-3 pb-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mb-3 mb-md-0">
+                    <div class="data-display p-3 bg-dark rounded border border-secondary h-100">
+                        <h4 class="text-white"><i class="fas fa-database me-2"></i>挑战实例</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong class="text-info">RPC URL:</strong></p>
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control bg-secondary text-light" 
+                                           id="rpcUrl" value="{{ request.host_url }}rpc" readonly>
+                                    <button class="btn btn-outline-light" onclick="copyRpcUrl()">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                {% if existing_challenge %}
+                                    <p><strong class="text-info">实例地址:</strong> {{ existing_challenge }}</p>
+                                {% else %}
+                                    <p class="text-muted">暂无实例数据</p>
+                                {% endif %}
+                                <p><strong class="text-info">私钥:</strong> {{ private_key }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="instanceStatus" class="h-100 d-flex align-items-center">
+                                    {% if existing_challenge %}
+                                        <span class="badge bg-success">实例已创建</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">等待创建实例</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="d-flex h-100">
+                        {% if door_number == 1 %}
+                            <div class="w-100">
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text">合约地址</span>
+                                    <input type="text" id="contractAddress" 
+                                           class="form-control bg-secondary text-light" placeholder="0x...">
+                                </div>
+                                <button id="submitInstance" class="btn btn-primary w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Instance
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="btn-group w-100">
+                                <button id="createInstance" class="btn btn-success flex-grow-1">
+                                    <i class="fas fa-plus-circle me-2"></i>Create Instance
+                                </button>
+                                <button id="submitInstance" class="btn btn-primary flex-grow-1" 
+                                        {% if not existing_challenge %}disabled{% endif %}>
+                                    <i class="fas fa-paper-plane me-2"></i>Submit
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 结果模态框 -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="resultModalTitle">结果</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="resultModalBody">
+                加载中...
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const createBtn = document.getElementById('createInstance');
+    const submitBtn = document.getElementById('submitInstance');
+    const dataDisplay = document.querySelector('.data-display');
+    const statusDisplay = document.getElementById('instanceStatus');
+    const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+    const contractAddressInput = document.getElementById('contractAddress');
+    
+    // 调整底部固定面板的边距
+    document.body.style.paddingBottom = document.querySelector('.fixed-bottom').offsetHeight + 'px';
+
+    
+    {% if door_number == 1 %}
+        // 第1扇门特殊处理
+        submitBtn.addEventListener('click', function() {
+            const address = contractAddressInput.value.trim();
+            if (!address) {
+                alert('请输入合约地址');
+                return;
+            }
+            
+            submitChallenge({{ door_number }}, address);
+        });
+    {% else %}
+        // 第2-8扇门处理
+        createBtn.addEventListener('click', function() {
+            createBtn.disabled = true;
+            createBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+            
+            fetch('/api/create_instance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    door_number: {{ door_number }}
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                // 更新显示
+                dataDisplay.innerHTML = `
+                    <h4 class="text-white"><i class="fas fa-database me-2"></i>挑战实例</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong class="text-info">RPC URL:</strong></p>
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control bg-secondary text-light" 
+                                       id="rpcUrl" value="{{ request.host_url }}rpc" readonly>
+                                <button class="btn btn-outline-light" onclick="copyRpcUrl()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <p><strong class="text-info">实例地址:</strong> ${data.challenge_address}</p>
+                            <p><strong class="text-info">私钥:</strong> ${data.private_key}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="h-100 d-flex align-items-center">
+                                <span class="badge bg-success">实例已创建</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                submitBtn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('创建实例失败');
+            })
+            .finally(() => {
+                createBtn.disabled = false;
+                createBtn.innerHTML = '<i class="fas fa-plus-circle me-2"></i>Create Instance';
+            });
+        });
+        
+        submitBtn.addEventListener('click', function() {
+            submitChallenge({{ door_number }});
+        });
+    {% endif %}
+    
+    function submitChallenge(doorNumber, address = null) {
+        const data = { door_number: doorNumber };
+        if (address) {
+            data.address = address;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+        
+        fetch('/api/submit_instance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            const modalTitle = document.getElementById('resultModalTitle');
+            const modalBody = document.getElementById('resultModalBody');
+            
+            if (data.solved) {
+                modalTitle.innerHTML = '<i class="fas fa-check-circle text-success me-2"></i>成功';
+                modalBody.innerHTML = `
+                    <div class="alert alert-success">
+                        <h4><i class="fas fa-trophy me-2"></i>${data.message}</h4>
+                        <p class="mt-3">您已成功解决第${doorNumber}扇门的挑战!</p>
+                    </div>
+                `;
+            } else {
+                modalTitle.innerHTML = '<i class="fas fa-times-circle text-danger me-2"></i>未完成';
+                modalBody.innerHTML = `
+                    <div class="alert alert-warning">
+                        <h4><i class="fas fa-exclamation-triangle me-2"></i>${data.message}</h4>
+                        <p class="mt-3">请检查您的解决方案并重试。</p>
+                    </div>
+                `;
+            }
+            
+            resultModal.show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('提交失败，请重试');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit';
+        });
+    }
+});
+</script>
+
+<style>
+/* 固定底部面板样式 */
+.fixed-bottom {
+    z-index: 1020;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 主要内容区域滚动 */
+.container-fluid {
+    height: calc(100vh - 56px); /* 减去导航栏高度 */
+    padding-bottom: 200px; /* 为固定面板留出空间 */
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .fixed-bottom {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .fixed-bottom .container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .fixed-bottom .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .fixed-bottom .col-md-8, 
+    .fixed-bottom .col-md-4 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+</style>
+{% endblock %}
